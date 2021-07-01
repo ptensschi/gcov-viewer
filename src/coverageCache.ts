@@ -13,11 +13,14 @@ export class CoverageCache {
         const gcovDataArray = await loadGcovData(gcdaPaths);
 
         for (const gcovData of gcovDataArray) {
+            const workingDir = gcovData.current_working_directory;
             for (const fileData of gcovData.files) {
-                const cachedFileData = this.dataByFile.get(fileData.file);
+                var path = require("path");
+                const absolutePath = path.resolve(workingDir + '/' + fileData.file);
+                const cachedFileData = this.dataByFile.get(absolutePath);
                 if (cachedFileData === undefined) {
-                    this.dataByFile.set(fileData.file, {
-                        file: fileData.file,
+                    this.dataByFile.set(absolutePath, {
+                        file: absolutePath,
                         lines: [...fileData.lines],
                         functions: [...fileData.functions],
                     });
